@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111316">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Журнал железа</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: #111316; color: #EDEEF0;
+    font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+    padding: 18px 14px calc(60px + env(safe-area-inset-bottom));
+    max-width: 560px; margin: 0 auto; min-height: 100vh;
+  }
+  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .brand { font-size: 22px; font-weight: 800; letter-spacing: .06em; }
+  .sub { color: #8A8F99; font-size: 12px; margin-top: 2px; }
+  .muted { color: #8A8F99; font-size: 13px; }
+
+  .dayCard {
+    width: 100%; background: #1A1C21; border: 1px solid #24262C;
+    border-radius: 12px; padding: 16px 14px; color: inherit;
+    cursor: pointer; display: block; margin-bottom: 14px; text-align: left;
+  }
+  .dayCard:active { transform: scale(.985); }
+  .dayRow { display: flex; align-items: center; gap: 14px; }
+  .dayTitle { font-weight: 600; font-size: 16px; }
+
+  .plate {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 18px; color: #111316; flex-shrink: 0;
+    box-shadow: inset 0 0 0 4px rgba(0,0,0,.25);
+  }
+  .plate.sm { width: 30px; height: 30px; font-size: 14px; }
+
+  .tipBox {
+    margin-top: 6px; padding: 12px 14px; border-radius: 10px;
+    background: #1A1C21; border: 1px dashed #2E323B;
+    color: #8A8F99; font-size: 13px; line-height: 1.45;
+  }
+
+  .dayBanner {
+    display: flex; align-items: baseline; gap: 10px;
+    padding: 12px 16px; border-radius: 12px; margin-bottom: 14px; color: #111316;
+  }
+  .bannerDay { font-weight: 800; letter-spacing: .05em; }
+  .bannerTitle { font-weight: 600; font-size: 15px; }
+
+  .exCard {
+    background: #1A1C21; border: 1px solid #24262C; border-radius: 12px;
+    padding: 14px; margin-bottom: 10px;
+  }
+  .exName { font-weight: 600; font-size: 15px; line-height: 1.3; display: inline; }
+  .exTarget { color: #8A8F99; font-size: 12px; margin-top: 2px; }
+  .upBadge { font-size: 11px; font-weight: 700; white-space: nowrap; margin-left: 8px; }
+
+  .lastRow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .lastLabel { font-size: 11px; color: #6B7280; text-transform: uppercase; letter-spacing: .05em; }
+  .chip {
+    background: #22252B; border: 1px solid #2E323B; color: #B7BBC2;
+    border-radius: 999px; padding: 4px 10px; font-size: 12px; cursor: pointer;
+  }
+  .chip:active { background: #2E323B; }
+
+  .setsRow { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .setChip {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1.5px solid; border-radius: 999px; padding: 4px 6px 4px 12px;
+    font-size: 14px; font-weight: 600;
+  }
+  .delSet { background: none; border: none; color: #8A8F99; font-size: 15px; cursor: pointer; padding: 0 4px; line-height: 1; }
+
+  .inputRow { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+  .numInput {
+    width: 74px; background: #111316; border: 1px solid #2E323B;
+    border-radius: 10px; color: #EDEEF0; padding: 12px 10px;
+    font-size: 16px; text-align: center; outline: none;
+  }
+  .numInput:focus { border-color: #6B7280; }
+  .times { color: #8A8F99; }
+  .addBtn {
+    flex: 1; border: none; border-radius: 10px; padding: 12px 8px;
+    font-weight: 700; font-size: 14px; color: #111316; cursor: pointer;
+  }
+  .addBtn:active { filter: brightness(.9); }
+
+  .primaryBtn {
+    width: 100%; background: #EDEEF0; color: #111316; border: none; border-radius: 12px;
+    padding: 15px; font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 18px;
+  }
+  .ghostBtn {
+    background: none; border: 1px solid #2E323B; color: #B7BBC2;
+    border-radius: 10px; padding: 9px 14px; font-size: 13px; cursor: pointer;
+  }
+  .ghostBtn.wide { width: 100%; padding: 13px; margin-top: 10px; }
+
+  .histCard { background: #1A1C21; border: 1px solid #24262C; border-radius: 12px; margin-bottom: 10px; }
+  .histHead {
+    width: 100%; display: flex; align-items: center; gap: 10px;
+    background: none; border: none; color: inherit; padding: 13px 14px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  .histBody { padding: 4px 14px 14px; }
+  .histRow {
+    display: flex; justify-content: space-between; gap: 12px;
+    padding: 6px 0; border-bottom: 1px solid #22252B; font-size: 13px;
+  }
+  .histName { color: #B7BBC2; }
+  .histSets { color: #EDEEF0; white-space: nowrap; }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #EDEEF0; color: #111316; padding: 10px 18px;
+    border-radius: 999px; font-size: 13px; font-weight: 600;
+    box-shadow: 0 4px 20px rgba(0,0,0,.4); z-index: 50; white-space: nowrap;
+  }
+  .empty { color: #8A8F99; text-align: center; padding: 40px 0; font-size: 14px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+// ─── Программа ────────────────────────────────────────────────────────────
+const PROGRAM = {
+  A: { title: "Жимы + квадрицепс", color: "#E5484D", exercises: [
+    { name: "Присед в Смите (или гакк-присед)", sets: 3, repMin: 8, repMax: 12 },
+    { name: "Жим гантелей на наклонной 30°", sets: 3, repMin: 8, repMax: 12 },
+    { name: "Тяга горизонтального блока", sets: 3, repMin: 10, repMax: 12 },
+    { name: "Жим гантелей сидя", sets: 3, repMin: 8, repMax: 12 },
+    { name: "Face pull", sets: 3, repMin: 15, repMax: 20 },
+    { name: "Разгибания на трицепс (канат)", sets: 2, repMin: 12, repMax: 15 },
+    { name: "Скручивания на блоке", sets: 3, repMin: 10, repMax: 15 },
+  ]},
+  B: { title: "Тяги + задняя цепь", color: "#3E7BFA", exercises: [
+    { name: "Румынская тяга", sets: 3, repMin: 8, repMax: 12 },
+    { name: "Подтягивания / верхний блок", sets: 3, repMin: 6, repMax: 10 },
+    { name: "Жим гантелей лёжа", sets: 3, repMin: 8, repMax: 12 },
+    { name: "Тяга гантели в наклоне", sets: 3, repMin: 8, repMax: 12 },
+    { name: "Face pull", sets: 3, repMin: 15, repMax: 20 },
+    { name: "Сгибания на бицепс", sets: 2, repMin: 10, repMax: 12 },
+    { name: "Махи на заднюю дельту", sets: 2, repMin: 15, repMax: 20 },
+  ]},
+  C: { title: "Ноги + слабые места", color: "#F0B429", exercises: [
+    { name: "Жим ногами", sets: 3, repMin: 8, repMax: 12 },
+    { name: "Болгарские сплит-приседы", sets: 2, repMin: 10, repMax: 12 },
+    { name: "Брусья / жим в наклоне", sets: 3, repMin: 8, repMax: 12 },
+    { name: "Тяга блока нейтральным хватом", sets: 3, repMin: 10, repMax: 12 },
+    { name: "Y-raise на наклонной", sets: 3, repMin: 12, repMax: 15 },
+    { name: "Икры стоя", sets: 3, repMin: 12, repMax: 15 },
+    { name: "Планка", sets: 3, repMin: 45, repMax: 60, unit: "сек" },
+  ]},
+};
+
+const SESSIONS_KEY = "gymlog-sessions-v1";
+const DRAFT_KEY = "gymlog-draft-v1";
+
+// ─── Состояние ────────────────────────────────────────────────────────────
+let state = { view: "home", day: null, entries: {}, expanded: null };
+let sessions = [];
+
+function loadData() {
+  try { sessions = JSON.parse(localStorage.getItem(SESSIONS_KEY)) || []; } catch (e) { sessions = []; }
+  try {
+    const d = JSON.parse(localStorage.getItem(DRAFT_KEY));
+    if (d && d.day && PROGRAM[d.day]) {
+      state = { view: "workout", day: d.day, entries: d.entries || {}, expanded: null };
+      setTimeout(() => toast("Продолжаем незаконченную тренировку"), 300);
+    }
+  } catch (e) {}
+}
+function saveSessions() { localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions)); }
+function saveDraft() { localStorage.setItem(DRAFT_KEY, JSON.stringify({ day: state.day, entries: state.entries })); }
+function clearDraft() { localStorage.removeItem(DRAFT_KEY); }
+
+// ─── Утилиты ──────────────────────────────────────────────────────────────
+const esc = (s) => s.replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+const fmtDate = (iso) => new Date(iso).toLocaleDateString("ru-RU", { day: "numeric", month: "short" });
+const fmtSet = (s, unit) => s.w ? `${s.w}×${s.r}` : `${s.r}${unit ? " " + unit : ""}`;
+const lastSession = (d) => sessions.find(s => s.day === d) || null;
+
+function progressionHint(d, i) {
+  const last = lastSession(d);
+  if (!last) return false;
+  const sets = last.entries[i];
+  const ex = PROGRAM[d].exercises[i];
+  return !!(sets && sets.length >= ex.sets && sets.every(s => s.r >= ex.repMax));
+}
+
+let toastTimer = null;
+function toast(msg) {
+  document.querySelectorAll(".toast").forEach(el => el.remove());
+  const el = document.createElement("div");
+  el.className = "toast"; el.textContent = msg;
+  document.body.appendChild(el);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.remove(), 2500);
+}
+
+// ─── Действия ─────────────────────────────────────────────────────────────
+function go(view) { state.view = view; state.expanded = null; render(); }
+function startWorkout(d) { state = { view: "workout", day: d, entries: {}, expanded: null }; render(); }
+
+function addSet(i) {
+  const wEl = document.getElementById("w" + i), rEl = document.getElementById("r" + i);
+  const r = parseFloat(rEl.value.replace(",", "."));
+  if (!r) { rEl.focus(); return; }
+  const w = parseFloat(wEl.value.replace(",", ".")) || 0;
+  (state.entries[i] = state.entries[i] || []).push({ w, r });
+  saveDraft(); render();
+}
+function removeSet(i, si) {
+  state.entries[i].splice(si, 1);
+  saveDraft(); render();
+}
+function prefill(i, w, r) {
+  document.getElementById("w" + i).value = w || "";
+  document.getElementById("r" + i).value = r;
+}
+function finishWorkout() {
+  if (!Object.values(state.entries).some(a => a && a.length)) { toast("Запиши хотя бы один подход"); return; }
+  sessions.unshift({ id: Date.now(), date: new Date().toISOString(), day: state.day, entries: state.entries });
+  saveSessions(); clearDraft();
+  state = { view: "home", day: null, entries: {}, expanded: null };
+  render(); toast("Тренировка сохранена 💪");
+}
+function cancelWorkout() {
+  clearDraft();
+  state = { view: "home", day: null, entries: {}, expanded: null };
+  render();
+}
+function toggleHist(id) { state.expanded = state.expanded === id ? null : id; render(); }
+
+// ─── Рендер ───────────────────────────────────────────────────────────────
+function render() {
+  const app = document.getElementById("app");
+  let html = `<header><div><div class="brand">ЖУРНАЛ ЖЕЛЕЗА</div>
+    <div class="sub">Full Body 3× · двойная прогрессия</div></div>`;
+  if (state.view === "home" && sessions.length)
+    html += `<button class="ghostBtn" onclick="go('history')">История</button>`;
+  if (state.view === "history")
+    html += `<button class="ghostBtn" onclick="go('home')">Назад</button>`;
+  html += `</header>`;
+
+  if (state.view === "home") {
+    for (const [key, p] of Object.entries(PROGRAM)) {
+      const last = lastSession(key);
+      html += `<button class="dayCard" style="border-left:6px solid ${p.color}" onclick="startWorkout('${key}')">
+        <div class="dayRow">
+          <span class="plate" style="background:${p.color}">${key}</span>
+          <div style="flex:1">
+            <div class="dayTitle">${esc(p.title)}</div>
+            <div class="muted">${last ? "Последняя: " + fmtDate(last.date) : "Ещё не выполнялась"}</div>
+          </div>
+          <span class="muted" style="font-size:20px">›</span>
+        </div></button>`;
+    }
+    html += `<div class="tipBox">Правило: дошёл до верха диапазона повторов во всех подходах —
+      на следующей тренировке +2,5–5 кг. Держи запас 2–3 повтора до отказа —
+      так нервная система восстанавливается быстрее.</div>`;
+  }
+
+  if (state.view === "workout") {
+    const p = PROGRAM[state.day];
+    html += `<div class="dayBanner" style="background:${p.color}">
+      <span class="bannerDay">ДЕНЬ ${state.day}</span><span class="bannerTitle">${esc(p.title)}</span></div>`;
+    p.exercises.forEach((ex, i) => {
+      const sets = state.entries[i] || [];
+      const last = lastSession(state.day)?.entries[i] || null;
+      html += `<div class="exCard">
+        <div><span class="exName">${esc(ex.name)}</span>
+          ${progressionHint(state.day, i) ? `<span class="upBadge" style="color:${p.color}">↑ добавь вес</span>` : ""}</div>
+        <div class="exTarget">План: ${ex.sets} × ${ex.repMin}–${ex.repMax}${ex.unit ? " " + ex.unit : ""}</div>`;
+      if (last) {
+        html += `<div class="lastRow"><span class="lastLabel">прошлый раз</span>`;
+        last.forEach(s => { html += `<button class="chip" onclick="prefill(${i},${s.w},${s.r})">${fmtSet(s, ex.unit)}</button>`; });
+        html += `</div>`;
+      }
+      if (sets.length) {
+        html += `<div class="setsRow">`;
+        sets.forEach((s, si) => {
+          html += `<span class="setChip" style="border-color:${p.color}">${fmtSet(s, ex.unit)}
+            <button class="delSet" onclick="removeSet(${i},${si})">×</button></span>`;
+        });
+        html += `</div>`;
+      }
+      html += `<div class="inputRow">
+        <input class="numInput" id="w${i}" type="text" inputmode="decimal" placeholder="кг">
+        <span class="times">×</span>
+        <input class="numInput" id="r${i}" type="text" inputmode="numeric" placeholder="${ex.unit || "повт"}">
+        <button class="addBtn" style="background:${p.color}" onclick="addSet(${i})">+ подход</button>
+      </div></div>`;
+    });
+    html += `<button class="primaryBtn" onclick="finishWorkout()">Завершить и сохранить</button>
+      <button class="ghostBtn wide" onclick="cancelWorkout()">Отменить без сохранения</button>`;
+  }
+
+  if (state.view === "history") {
+    if (!sessions.length) html += `<div class="empty">Пока пусто. Первая тренировка всё изменит.</div>`;
+    sessions.forEach(s => {
+      const p = PROGRAM[s.day];
+      const open = state.expanded === s.id;
+      html += `<div class="histCard">
+        <button class="histHead" onclick="toggleHist(${s.id})">
+          <span class="plate sm" style="background:${p.color}">${s.day}</span>
+          <span style="flex:1;text-align:left">${esc(p.title)}</span>
+          <span class="muted">${fmtDate(s.date)}</span>
+          <span class="muted" style="margin-left:8px">${open ? "▴" : "▾"}</span>
+        </button>`;
+      if (open) {
+        html += `<div class="histBody">`;
+        p.exercises.forEach((ex, i) => {
+          if (s.entries[i]?.length)
+            html += `<div class="histRow"><span class="histName">${esc(ex.name)}</span>
+              <span class="histSets">${s.entries[i].map(x => fmtSet(x, ex.unit)).join(" · ")}</span></div>`;
+        });
+        html += `</div>`;
+      }
+      html += `</div>`;
+    });
+  }
+
+  app.innerHTML = html;
+}
+
+// ─── Запуск ───────────────────────────────────────────────────────────────
+loadData();
+render();
+
+// Service worker для офлайн-режима (работает только по https / GitHub Pages)
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+</script>
+</body>
+</html>
