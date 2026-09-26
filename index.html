@@ -170,10 +170,10 @@ const CATALOG = {
   pulldown_c:   { name: "Верхний блок узким хватом", sets: 2, repMin: 10, repMax: 12, type: "base" },
   face_pull:    { name: "Face pull", sets: 2, repMin: 15, repMax: 20, type: "iso", note: "Верхний блок, канат, тянешь к лбу, локти вверх и в стороны" },
   calf:         { name: "Икры стоя", sets: 2, repMin: 12, repMax: 15, type: "iso" },
-  neck_side:    { name: "Боковые наклоны шеи лёжа", sets: 2, repMin: 15, repMax: 20, type: "safe", note: "Лёжа на боку, ухо к плечу. Повторы на каждую сторону, первые 2–3 недели без веса" },
 
   // выведены из программы — нужны только для истории
   vsquat:       { name: "V-Squat (Super Squat)", retired: true },
+  neck_side:    { name: "Боковые наклоны шеи лёжа", retired: true },
   crunch:       { name: "Скручивания на коврике", retired: true },
   plank:        { name: "Планка", retired: true, unit: "сек" },
   oh_tri_ext:   { name: "Жим гантели из-за головы сидя", retired: true },
@@ -194,7 +194,7 @@ const PROGRAM = {
   C: { title: "Ноги + слабые места", color: "#F0B429", exercises: [
     { id: "leg_press" }, { id: "leg_curl" }, { id: "leg_ext" },
     { options: ["incline_45", "pec_deck"], note: "Чередуй через тренировку — приложение само предложит нужное" },
-    { id: "pulldown_c" }, { id: "face_pull" }, { id: "calf" }, { id: "neck_side" },
+    { id: "pulldown_c" }, { id: "face_pull" }, { id: "calf" },
   ]},
 };
 
