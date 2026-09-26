@@ -126,77 +126,151 @@
     cursor: pointer; padding: 2px 0; margin-left: 8px; text-decoration: underline;
   }
   .exHist { margin-top: 8px; border-top: 1px solid #22252B; }
+  .exNote { color: #6B7280; font-size: 12px; margin-top: 6px; line-height: 1.4; }
+  .optRow { display: flex; gap: 6px; flex-wrap: wrap; }
+  .optBtn {
+    background: #22252B; border: 1.5px solid #2E323B; color: #B7BBC2;
+    border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .optBtn.on { color: #111316; }
+  .dayTag { font-weight: 800; margin-right: 8px; }
+  button:focus-visible, input:focus-visible { outline: 2px solid #6B7280; outline-offset: 2px; }
 </style>
 </head>
 <body>
 <div id="app"></div>
 
 <script>
-// ─── Программа ────────────────────────────────────────────────────────────
+// ─── Каталог упражнений ───────────────────────────────────────────────────
+// id — постоянный ключ истории. Меняешь название — история остаётся.
+// type: base — запас 1 повтор; iso — последний подход можно в отказ; safe — без отказа.
+const CATALOG = {
+  vsquat:       { name: "V-Squat (Super Squat)", sets: 2, repMin: 8, repMax: 12, type: "base" },
+  incline_db:   { name: "Жим гантелей на наклонной 30°", sets: 2, repMin: 8, repMax: 12, type: "base" },
+  cable_row:    { name: "Тяга горизонтального блока", sets: 2, repMin: 10, repMax: 12, type: "base", note: "Узкая нейтральная рукоять" },
+  seated_press: { name: "Жим гантелей сидя", sets: 2, repMin: 8, repMax: 12, type: "base" },
+  tri_french:   { name: "Французский жим гантелей лёжа", sets: 2, repMin: 10, repMax: 15, type: "iso", note: "Локти смотрят в потолок, гантели опускаешь за голову" },
+  rev_fly:      { name: "Обратная бабочка", sets: 2, repMin: 15, repMax: 20, type: "iso" },
+  neck_ext:     { name: "Разгибание шеи лёжа", sets: 2, repMin: 15, repMax: 20, type: "safe", note: "Лёжа лицом вниз, блин на затылке через полотенце. Первые 2–3 недели без веса" },
+  crunch:       { name: "Скручивания на коврике", sets: 2, repMin: 15, repMax: 20, type: "iso" },
+
+  rdl:          { name: "Румынская тяга", sets: 2, repMin: 8, repMax: 12, type: "base" },
+  pulldown:     { name: "Верхний блок / подтягивания, нейтральный хват", sets: 2, repMin: 6, repMax: 10, type: "base" },
+  flat_db:      { name: "Жим гантелей лёжа", sets: 2, repMin: 8, repMax: 12, type: "base" },
+  db_row:       { name: "Тяга гантели с упором в скамью", sets: 2, repMin: 8, repMax: 12, type: "base", note: "Колено и рука на скамье, поясница разгружена" },
+  shrug:        { name: "Шраги с гантелями", sets: 2, repMin: 12, repMax: 15, type: "iso", note: "Строго вверх, без вращений, голову не выносить вперёд" },
+  curl:         { name: "Сгибания на бицепс", sets: 2, repMin: 10, repMax: 12, type: "iso" },
+  lat_raise:    { name: "Махи гантелей в стороны", sets: 2, repMin: 15, repMax: 20, type: "iso" },
+
+  leg_press:    { name: "Жим ногами", sets: 2, repMin: 8, repMax: 12, type: "base" },
+  leg_curl:     { name: "Сгибания ног в тренажёре", sets: 2, repMin: 10, repMax: 15, type: "iso", note: "Сидя, если есть такой тренажёр" },
+  leg_ext:      { name: "Разгибания ног в тренажёре", sets: 2, repMin: 10, repMax: 15, type: "iso" },
+  pec_deck:     { name: "Бабочка", sets: 2, repMin: 10, repMax: 15, type: "iso" },
+  pulldown_c:   { name: "Верхний блок узким хватом", sets: 2, repMin: 10, repMax: 12, type: "base" },
+  face_pull:    { name: "Face pull", sets: 2, repMin: 15, repMax: 20, type: "iso", note: "Верхний блок, канат, тянешь к лбу, локти вверх и в стороны" },
+  calf:         { name: "Икры стоя", sets: 2, repMin: 12, repMax: 15, type: "iso" },
+  plank:        { name: "Планка", sets: 2, repMin: 45, repMax: 60, unit: "сек", type: "safe" },
+
+  // выведены из программы — нужны только для истории
+  oh_tri_ext:   { name: "Жим гантели из-за головы сидя", retired: true },
+  bulgarian:    { name: "Болгарские сплит-приседы", retired: true, unit: "" },
+  dips:         { name: "Брусья / жим в наклоне", retired: true },
+  y_raise:      { name: "Y-raise на наклонной", retired: true },
+};
+
 const PROGRAM = {
   A: { title: "Жимы + квадрицепс", color: "#E5484D", exercises: [
-    { name: "Присед в Смите (или гакк-присед)", sets: 3, repMin: 8, repMax: 12 },
-    { name: "Жим гантелей на наклонной 30°", sets: 3, repMin: 8, repMax: 12 },
-    { name: "Тяга горизонтального блока", sets: 3, repMin: 10, repMax: 12 },
-    { name: "Жим гантелей сидя", sets: 3, repMin: 8, repMax: 12 },
-    { name: "Обратная бабочка", sets: 3, repMin: 15, repMax: 20 },
-    { name: "Жим гантели из-за головы сидя", sets: 2, repMin: 10, repMax: 15 },
-    { name: "Скручивания на коврике", sets: 3, repMin: 15, repMax: 20 },
+    { id: "vsquat" }, { id: "incline_db" }, { id: "cable_row" }, { id: "seated_press" },
+    { id: "tri_french" }, { id: "rev_fly" }, { id: "neck_ext" }, { id: "crunch" },
   ]},
   B: { title: "Тяги + задняя цепь", color: "#3E7BFA", exercises: [
-    { name: "Румынская тяга", sets: 3, repMin: 8, repMax: 12 },
-    { name: "Подтягивания / верхний блок", sets: 3, repMin: 6, repMax: 10 },
-    { name: "Жим гантелей лёжа", sets: 3, repMin: 8, repMax: 12 },
-    { name: "Тяга гантели в наклоне", sets: 3, repMin: 8, repMax: 12 },
-    { name: "Обратная бабочка", sets: 3, repMin: 15, repMax: 20 },
-    { name: "Сгибания на бицепс", sets: 2, repMin: 10, repMax: 12 },
-    { name: "Махи гантелей в стороны", sets: 2, repMin: 15, repMax: 20 },
+    { id: "rdl" }, { id: "pulldown" }, { id: "flat_db" }, { id: "db_row" },
+    { id: "rev_fly" }, { id: "shrug" }, { id: "curl" }, { id: "lat_raise" },
   ]},
   C: { title: "Ноги + слабые места", color: "#F0B429", exercises: [
-    { name: "Жим ногами", sets: 3, repMin: 8, repMax: 12 },
-    { name: "Болгарские сплит-приседы", sets: 2, repMin: 10, repMax: 12 },
-    { name: "Брусья / жим в наклоне", sets: 3, repMin: 8, repMax: 12 },
-    { name: "Тяга блока нейтральным хватом", sets: 3, repMin: 10, repMax: 12 },
-    { name: "Y-raise на наклонной", sets: 3, repMin: 12, repMax: 15 },
-    { name: "Икры стоя", sets: 3, repMin: 12, repMax: 15 },
-    { name: "Планка", sets: 3, repMin: 45, repMax: 60, unit: "сек" },
+    { id: "leg_press" }, { id: "leg_curl" }, { id: "leg_ext" },
+    { options: ["incline_db", "pec_deck"], note: "Чередуй через тренировку — приложение само предложит нужное" },
+    { id: "pulldown_c" }, { id: "face_pull" }, { id: "calf" }, { id: "plank" },
   ]},
 };
 
+// Старая программа: записи хранились по номеру упражнения в дне
+const LEGACY = {
+  A: ["vsquat", "incline_db", "cable_row", "seated_press", "rev_fly", "oh_tri_ext", "crunch"],
+  B: ["rdl", "pulldown", "flat_db", "db_row", "rev_fly", "curl", "lat_raise"],
+  C: ["leg_press", "bulgarian", "dips", "pulldown_c", "y_raise", "calf", "plank"],
+};
+
 const SESSIONS_KEY = "gymlog-sessions-v1";
+const BACKUP_KEY = "gymlog-sessions-v1-backup";
 const DRAFT_KEY = "gymlog-draft-v1";
 
 // ─── Состояние ────────────────────────────────────────────────────────────
-let state = { view: "home", day: null, entries: {}, expanded: null };
+let state = { view: "home", day: null, entries: {}, choice: {}, expanded: null };
 let sessions = [];
 let exOpen = {};
 
+function migrateEntries(day, entries) {
+  const out = {};
+  const map = LEGACY[day] || [];
+  for (const [k, sets] of Object.entries(entries || {})) {
+    const id = /^\d+$/.test(k) ? map[+k] : k;
+    if (id && sets && sets.length) out[id] = (out[id] || []).concat(sets);
+  }
+  return out;
+}
+
 function loadData() {
-  try { sessions = JSON.parse(localStorage.getItem(SESSIONS_KEY)) || []; } catch (e) { sessions = []; }
+  let raw = null;
+  try { raw = localStorage.getItem(SESSIONS_KEY); sessions = JSON.parse(raw) || []; } catch (e) { sessions = []; }
+  if (sessions.some(s => s.v !== 2)) {
+    try { if (raw && !localStorage.getItem(BACKUP_KEY)) localStorage.setItem(BACKUP_KEY, raw); } catch (e) {}
+    sessions = sessions.map(s => s.v === 2 ? s : { ...s, v: 2, entries: migrateEntries(s.day, s.entries) });
+    saveSessions();
+  }
   try {
     const d = JSON.parse(localStorage.getItem(DRAFT_KEY));
     if (d && d.day && PROGRAM[d.day]) {
-      state = { view: "workout", day: d.day, entries: d.entries || {}, expanded: null };
+      const entries = d.v === 2 ? d.entries : migrateEntries(d.day, d.entries);
+      state = { view: "workout", day: d.day, entries: entries || {}, choice: d.choice || defaultChoice(d.day), expanded: null };
       setTimeout(() => toast("Продолжаем незаконченную тренировку"), 300);
     }
   } catch (e) {}
 }
-function saveSessions() { localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions)); }
-function saveDraft() { localStorage.setItem(DRAFT_KEY, JSON.stringify({ day: state.day, entries: state.entries })); }
-function clearDraft() { localStorage.removeItem(DRAFT_KEY); }
+function saveSessions() { try { localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions)); } catch (e) { toast("Не удалось сохранить: память браузера недоступна"); } }
+function saveDraft() { try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ v: 2, day: state.day, entries: state.entries, choice: state.choice })); } catch (e) {} }
+function clearDraft() { try { localStorage.removeItem(DRAFT_KEY); } catch (e) {} }
 
 // ─── Утилиты ──────────────────────────────────────────────────────────────
-const esc = (s) => s.replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
 const fmtDate = (iso) => new Date(iso).toLocaleDateString("ru-RU", { day: "numeric", month: "short" });
 const fmtSet = (s, unit) => s.w ? `${s.w}×${s.r}` : `${s.r}${unit ? " " + unit : ""}`;
 const lastSession = (d) => sessions.find(s => s.day === d) || null;
+const lastWith = (id) => sessions.find(s => s.entries[id] && s.entries[id].length) || null;
+const ruleText = (t) => t === "base" ? "запас 1 повтор" : t === "iso" ? "последний можно в отказ" : "без отказа";
 
-function progressionHint(d, i) {
-  const last = lastSession(d);
-  if (!last) return false;
-  const sets = last.entries[i];
-  const ex = PROGRAM[d].exercises[i];
-  return !!(sets && sets.length >= ex.sets && sets.every(s => s.r >= ex.repMax));
+function defaultChoice(d) {
+  const choice = {};
+  PROGRAM[d].exercises.forEach((slot, i) => {
+    if (!slot.options) return;
+    const prev = sessions.find(s => s.day === d && slot.options.some(o => s.entries[o] && s.entries[o].length));
+    if (!prev) { choice[i] = slot.options[0]; return; }
+    const used = slot.options.findIndex(o => prev.entries[o] && prev.entries[o].length);
+    choice[i] = slot.options[(used + 1) % slot.options.length];
+  });
+  return choice;
+}
+function slotId(i) {
+  const slot = PROGRAM[state.day].exercises[i];
+  return slot.options ? (state.choice[i] || slot.options[0]) : slot.id;
+}
+
+function progressionHint(id) {
+  const ex = CATALOG[id];
+  const last = lastWith(id);
+  if (!last || !ex.sets) return false;
+  const sets = last.entries[id];
+  return sets.length >= ex.sets && sets.every(s => s.r >= ex.repMax);
 }
 
 let toastTimer = null;
@@ -211,20 +285,24 @@ function toast(msg) {
 
 // ─── Действия ─────────────────────────────────────────────────────────────
 function go(view) { state.view = view; state.expanded = null; render(); }
-function startWorkout(d) { exOpen = {}; state = { view: "workout", day: d, entries: {}, expanded: null }; render(); }
+function startWorkout(d) { exOpen = {}; state = { view: "workout", day: d, entries: {}, choice: defaultChoice(d), expanded: null }; render(); }
 function toggleExHist(i) { exOpen[i] = !exOpen[i]; render(); }
+function choose(i, id) { state.choice[i] = id; exOpen[i] = false; saveDraft(); render(); }
 
 function addSet(i) {
   const wEl = document.getElementById("w" + i), rEl = document.getElementById("r" + i);
   const r = parseFloat(rEl.value.replace(",", "."));
   if (!r) { rEl.focus(); return; }
   const w = parseFloat(wEl.value.replace(",", ".")) || 0;
-  (state.entries[i] = state.entries[i] || []).push({ w, r });
+  const id = slotId(i);
+  (state.entries[id] = state.entries[id] || []).push({ w, r });
   rEl.value = "";
   saveDraft(); render();
 }
 function removeSet(i, si) {
-  state.entries[i].splice(si, 1);
+  const id = slotId(i);
+  state.entries[id].splice(si, 1);
+  if (!state.entries[id].length) delete state.entries[id];
   saveDraft(); render();
 }
 function prefill(i, w, r) {
@@ -232,18 +310,28 @@ function prefill(i, w, r) {
   document.getElementById("r" + i).value = r;
 }
 function finishWorkout() {
-  if (!Object.values(state.entries).some(a => a && a.length)) { toast("Запиши хотя бы один подход"); return; }
-  sessions.unshift({ id: Date.now(), date: new Date().toISOString(), day: state.day, entries: state.entries });
+  const entries = {};
+  for (const [id, sets] of Object.entries(state.entries)) if (sets && sets.length) entries[id] = sets;
+  if (!Object.keys(entries).length) { toast("Запиши хотя бы один подход"); return; }
+  sessions.unshift({ v: 2, id: Date.now(), date: new Date().toISOString(), day: state.day, entries });
   saveSessions(); clearDraft();
-  state = { view: "home", day: null, entries: {}, expanded: null };
+  state = { view: "home", day: null, entries: {}, choice: {}, expanded: null };
   render(); toast("Тренировка сохранена 💪");
 }
 function cancelWorkout() {
   clearDraft();
-  state = { view: "home", day: null, entries: {}, expanded: null };
+  state = { view: "home", day: null, entries: {}, choice: {}, expanded: null };
   render();
 }
 function toggleHist(id) { state.expanded = state.expanded === id ? null : id; render(); }
+
+// порядок упражнений в истории: как в текущей программе дня, выведенные — в конце
+function orderedIds(day, entries) {
+  const seq = [];
+  (PROGRAM[day]?.exercises || []).forEach(sl => (sl.options || [sl.id]).forEach(id => { if (!seq.includes(id)) seq.push(id); }));
+  const keys = Object.keys(entries);
+  return [...seq.filter(id => keys.includes(id)), ...keys.filter(id => !seq.includes(id))];
+}
 
 // ─── Рендер ───────────────────────────────────────────────────────────────
 function render() {
@@ -251,7 +339,7 @@ function render() {
   const savedInputs = {};
   document.querySelectorAll(".numInput").forEach(el => { if (el.value) savedInputs[el.id] = el.value; });
   let html = `<header><div><div class="brand">ЖУРНАЛ ЖЕЛЕЗА</div>
-    <div class="sub">Full Body 3× · двойная прогрессия</div></div>`;
+    <div class="sub">Full Body 3×, два рабочих подхода</div></div>`;
   if (state.view === "home" && sessions.length)
     html += `<button class="ghostBtn" onclick="go('history')">История</button>`;
   if (state.view === "history")
@@ -271,26 +359,40 @@ function render() {
           <span class="muted" style="font-size:20px">›</span>
         </div></button>`;
     }
-    html += `<div class="tipBox">Правило: дошёл до верха диапазона повторов во всех подходах —
-      на следующей тренировке +2,5–5 кг. Держи запас 2–3 повтора до отказа —
-      так нервная система восстанавливается быстрее.</div>`;
+    html += `<div class="tipBox">Записывай только рабочие подходы. Разминку (50% × 8–10, затем 75% × 3–5) не вноси — иначе сломается подсказка прогрессии.<br><br>
+      Базовые — запас 1 повтор до отказа. Изоляция — последний подход можно в отказ.
+      Дошёл до верха диапазона в обоих подходах — на следующей тренировке +2,5–5 кг.<br><br>
+      Закружилась голова — подход сразу прекращай, садись.</div>`;
   }
 
   if (state.view === "workout") {
     const p = PROGRAM[state.day];
     html += `<div class="dayBanner" style="background:${p.color}">
       <span class="bannerDay">ДЕНЬ ${state.day}</span><span class="bannerTitle">${esc(p.title)}</span></div>`;
-    p.exercises.forEach((ex, i) => {
-      const sets = state.entries[i] || [];
-      const last = lastSession(state.day)?.entries[i] || null;
-      html += `<div class="exCard">
-        <div><span class="exName">${esc(ex.name)}</span>
-          ${progressionHint(state.day, i) ? `<span class="upBadge" style="color:${p.color}">↑ добавь вес</span>` : ""}</div>
-        <div class="exTarget">План: ${ex.sets} × ${ex.repMin}–${ex.repMax}${ex.unit ? " " + ex.unit : ""}<button class="linkBtn" onclick="toggleExHist(${i})">${exOpen[i] ? "скрыть ▴" : "вся история ▾"}</button></div>`;
+    p.exercises.forEach((slot, i) => {
+      const id = slotId(i);
+      const ex = CATALOG[id];
+      const sets = state.entries[id] || [];
+      const lastS = lastWith(id);
+      const last = lastS ? lastS.entries[id] : null;
+      const note = slot.note || ex.note;
+      html += `<div class="exCard">`;
+      if (slot.options) {
+        html += `<div class="optRow">` + slot.options.map(o =>
+          `<button class="optBtn${o === id ? " on" : ""}" style="${o === id ? `background:${p.color};border-color:${p.color}` : ""}" onclick="choose(${i},'${o}')">${esc(CATALOG[o].name)}</button>`
+        ).join("") + `</div>`;
+      } else {
+        html += `<div><span class="exName">${esc(ex.name)}</span>`;
+      }
+      if (slot.options) html += `<div>`;
+      html += progressionHint(id) ? `<span class="upBadge" style="color:${p.color}">↑ добавь вес</span>` : "";
+      html += `</div>`;
+      html += `<div class="exTarget">План: ${ex.sets} × ${ex.repMin}–${ex.repMax}${ex.unit ? " " + ex.unit : ""}, ${ruleText(ex.type)}<button class="linkBtn" onclick="toggleExHist(${i})">${exOpen[i] ? "скрыть ▴" : "вся история ▾"}</button></div>`;
+      if (note) html += `<div class="exNote">${esc(note)}</div>`;
       if (exOpen[i]) {
-        const hist = sessions.filter(s => s.day === state.day && s.entries[i] && s.entries[i].length);
+        const hist = sessions.filter(s => s.entries[id] && s.entries[id].length);
         html += `<div class="exHist">` + (hist.length
-          ? hist.map(s => `<div class="histRow"><span class="histName">${fmtDate(s.date)}</span><span class="histSets">${s.entries[i].map(x => fmtSet(x, ex.unit)).join(" · ")}</span></div>`).join("")
+          ? hist.map(s => `<div class="histRow"><span class="histName"><span class="dayTag" style="color:${PROGRAM[s.day]?.color || "#8A8F99"}">${s.day}</span>${fmtDate(s.date)}</span><span class="histSets">${s.entries[id].map(x => fmtSet(x, ex.unit)).join(" · ")}</span></div>`).join("")
           : `<div class="muted" style="padding:8px 0 4px">Записей ещё нет</div>`) + `</div>`;
       }
       if (last) {
@@ -320,7 +422,7 @@ function render() {
   if (state.view === "history") {
     if (!sessions.length) html += `<div class="empty">Пока пусто. Первая тренировка всё изменит.</div>`;
     sessions.forEach(s => {
-      const p = PROGRAM[s.day];
+      const p = PROGRAM[s.day] || { title: "Тренировка", color: "#8A8F99" };
       const open = state.expanded === s.id;
       html += `<div class="histCard">
         <button class="histHead" onclick="toggleHist(${s.id})">
@@ -331,10 +433,10 @@ function render() {
         </button>`;
       if (open) {
         html += `<div class="histBody">`;
-        p.exercises.forEach((ex, i) => {
-          if (s.entries[i]?.length)
-            html += `<div class="histRow"><span class="histName">${esc(ex.name)}</span>
-              <span class="histSets">${s.entries[i].map(x => fmtSet(x, ex.unit)).join(" · ")}</span></div>`;
+        orderedIds(s.day, s.entries).forEach(id => {
+          const ex = CATALOG[id] || { name: id };
+          html += `<div class="histRow"><span class="histName">${esc(ex.name)}</span>
+            <span class="histSets">${s.entries[id].map(x => fmtSet(x, ex.unit)).join(" · ")}</span></div>`;
         });
         html += `</div>`;
       }
