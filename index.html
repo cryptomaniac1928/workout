@@ -149,7 +149,7 @@ const CATALOG = {
   incline_db:   { name: "Жим гантелей на наклонной 30°", sets: 2, repMin: 8, repMax: 12, type: "base" },
   cable_row:    { name: "Тяга горизонтального блока", sets: 2, repMin: 10, repMax: 12, type: "base", note: "Узкая нейтральная рукоять" },
   seated_press: { name: "Жим гантелей сидя", sets: 2, repMin: 8, repMax: 12, type: "base" },
-  tri_french:   { name: "Французский жим гантелей лёжа", sets: 2, repMin: 10, repMax: 15, type: "iso", note: "Локти смотрят в потолок, гантели опускаешь за голову" },
+  tri_french:   { name: "Французский жим гантелей на наклонной", sets: 2, repMin: 10, repMax: 15, type: "iso", note: "Скамья 30–45°. Локти смотрят в потолок и не разъезжаются, гантели опускаешь за голову до растяжения трицепса" },
   rev_fly:      { name: "Обратная бабочка", sets: 2, repMin: 15, repMax: 20, type: "iso" },
   neck_ext:     { name: "Разгибание шеи лёжа", sets: 2, repMin: 15, repMax: 20, type: "safe", note: "Лёжа лицом вниз, блин на затылке через полотенце. Первые 2–3 недели без веса" },
   neck_flex:    { name: "Сгибание шеи лёжа", sets: 2, repMin: 15, repMax: 20, type: "safe", note: "Лёжа на спине, блин на лбу через полотенце, подбородок к груди. Первые 2–3 недели без веса" },
@@ -159,22 +159,24 @@ const CATALOG = {
   flat_db:      { name: "Жим гантелей лёжа", sets: 2, repMin: 8, repMax: 12, type: "base" },
   db_row:       { name: "Тяга гантели с упором в скамью", sets: 2, repMin: 8, repMax: 12, type: "base", note: "Колено и рука на скамье, поясница разгружена" },
   shrug:        { name: "Шраги с гантелями", sets: 2, repMin: 12, repMax: 15, type: "iso", note: "Строго вверх, без вращений, голову не выносить вперёд" },
-  curl:         { name: "Сгибания на бицепс", sets: 2, repMin: 10, repMax: 12, type: "iso" },
+  curl_incline: { name: "Сгибания гантелей на наклонной скамье", sets: 2, repMin: 10, repMax: 12, type: "iso", note: "Скамья 45–60°, руки свисают за корпусом. Локти не уводи вперёд, внизу полное разгибание" },
   lat_raise:    { name: "Махи гантелей в стороны", sets: 2, repMin: 15, repMax: 20, type: "iso" },
 
   leg_press:    { name: "Жим ногами", sets: 2, repMin: 8, repMax: 12, type: "base" },
   leg_curl:     { name: "Сгибания ног в тренажёре", sets: 2, repMin: 10, repMax: 15, type: "iso", note: "Сидя, если есть такой тренажёр" },
-  leg_ext:      { name: "Разгибания ног в тренажёре", sets: 2, repMin: 10, repMax: 15, type: "iso" },
-  incline_bb30: { name: "Жим штанги на наклонной 30°", sets: 2, repMin: 8, repMax: 12, type: "base", note: "Без страховщика — в Смите или со страховочными упорами" },
+  leg_ext:      { name: "Разгибания ног в тренажёре", sets: 2, repMin: 10, repMax: 15, type: "iso", note: "Если спинка регулируется — откинь её назад, так сильнее растягивается прямая мышца бедра" },
+  incline_db_n: { name: "Жим гантелей на наклонной 30°, нейтральный хват", sets: 2, repMin: 8, repMax: 12, type: "base", note: "Ладони смотрят друг на друга. Внизу пауза в растяжении, без отбива" },
   pec_deck:     { name: "Бабочка", sets: 2, repMin: 10, repMax: 15, type: "iso" },
   pulldown_c:   { name: "Верхний блок узким хватом", sets: 2, repMin: 10, repMax: 12, type: "base" },
   face_pull:    { name: "Face pull", sets: 2, repMin: 15, repMax: 20, type: "iso", note: "Верхний блок, канат, тянешь к лбу, локти вверх и в стороны" },
-  calf:         { name: "Икры стоя", sets: 2, repMin: 12, repMax: 15, type: "iso" },
+  calf:         { name: "Икры в жиме ногами", sets: 2, repMin: 12, repMax: 15, type: "safe", note: "Подушечки стоп целиком на нижнем краю платформы, колени почти прямые. Внизу пауза 1–2 сек в растяжении" },
 
   // выведены из программы — нужны только для истории
   vsquat:       { name: "V-Squat (Super Squat)", retired: true },
   neck_side:    { name: "Боковые наклоны шеи лёжа", retired: true },
   incline_45:   { name: "Жим штанги на наклонной 45°", retired: true },
+  incline_bb30: { name: "Жим штанги на наклонной 30°", retired: true },
+  curl:         { name: "Сгибания на бицепс", retired: true },
   crunch:       { name: "Скручивания на коврике", retired: true },
   plank:        { name: "Планка", retired: true, unit: "сек" },
   oh_tri_ext:   { name: "Жим гантели из-за головы сидя", retired: true },
@@ -190,11 +192,11 @@ const PROGRAM = {
   ]},
   B: { title: "Тяги + задняя цепь", color: "#3E7BFA", exercises: [
     { id: "rdl" }, { id: "pulldown" }, { id: "flat_db" }, { id: "db_row" },
-    { id: "rev_fly" }, { id: "shrug" }, { id: "curl" }, { id: "lat_raise" },
+    { id: "rev_fly" }, { id: "shrug" }, { id: "curl_incline" }, { id: "lat_raise" },
   ]},
   C: { title: "Ноги + слабые места", color: "#F0B429", exercises: [
     { id: "leg_press" }, { id: "leg_curl" }, { id: "leg_ext" },
-    { options: ["incline_bb30", "pec_deck"], note: "Чередуй через тренировку — приложение само предложит нужное" },
+    { options: ["incline_db_n", "pec_deck"], note: "Чередуй через тренировку — приложение само предложит нужное" },
     { id: "pulldown_c" }, { id: "face_pull" }, { id: "calf" },
   ]},
 };
@@ -205,6 +207,9 @@ const LEGACY = {
   B: ["rdl", "pulldown", "flat_db", "db_row", "rev_fly", "curl", "lat_raise"],
   C: ["leg_press", "bulgarian", "dips", "pulldown_c", "y_raise", "calf", "plank"],
 };
+
+// прежние варианты того же слота — для чередования в дне C
+const ALIASES = { incline_db_n: ["incline_bb30", "incline_45", "incline_db"] };
 
 const SESSIONS_KEY = "gymlog-sessions-v1";
 const BACKUP_KEY = "gymlog-sessions-v1-backup";
@@ -258,9 +263,10 @@ function defaultChoice(d) {
   const choice = {};
   PROGRAM[d].exercises.forEach((slot, i) => {
     if (!slot.options) return;
-    const prev = sessions.find(s => s.day === d && slot.options.some(o => s.entries[o] && s.entries[o].length));
+    const has = (s, o) => [o, ...(ALIASES[o] || [])].some(k => s.entries[k] && s.entries[k].length);
+    const prev = sessions.find(s => s.day === d && slot.options.some(o => has(s, o)));
     if (!prev) { choice[i] = slot.options[0]; return; }
-    const used = slot.options.findIndex(o => prev.entries[o] && prev.entries[o].length);
+    const used = slot.options.findIndex(o => has(prev, o));
     choice[i] = slot.options[(used + 1) % slot.options.length];
   });
   return choice;
