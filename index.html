@@ -146,12 +146,12 @@
 // type: base — запас 1 повтор; iso — последний подход можно в отказ; safe — без отказа.
 const CATALOG = {
   smith_squat:  { name: "Присед в Смите", sets: 2, repMin: 8, repMax: 12, type: "base", note: "Стопы на 10–15 см впереди грифа, до параллели и ниже. Вдох перед повтором, выдох наверху" },
-  incline_db:   { name: "Жим гантелей на наклонной 30°", sets: 2, repMin: 8, repMax: 12, type: "base" },
+  incline_db:   { name: "Жим гантелей на наклонной 30°", sets: 3, repMin: 8, repMax: 12, type: "base" },
   cable_row:    { name: "Тяга горизонтального блока", sets: 2, repMin: 10, repMax: 12, type: "base", note: "Узкая нейтральная рукоять" },
   seated_press: { name: "Жим гантелей сидя", sets: 2, repMin: 8, repMax: 12, type: "base" },
   tri_french:   { name: "Французский жим гантелей на наклонной", sets: 2, repMin: 10, repMax: 15, type: "iso", note: "Скамья 30–45°. Локти смотрят в потолок и не разъезжаются, гантели опускаешь за голову до растяжения трицепса" },
   rev_fly:      { name: "Обратная бабочка", sets: 2, repMin: 15, repMax: 20, type: "iso" },
-  neck_ext:     { name: "Разгибание шеи лёжа", sets: 2, repMin: 15, repMax: 20, type: "safe", note: "Лёжа лицом вниз, блин на затылке через полотенце. Первые 2–3 недели без веса" },
+  calf_seated:  { name: "Подъёмы на икры сидя", sets: 3, repMin: 15, repMax: 20, type: "iso", note: "Сидя на скамье, гантель или блин на коленях, носки на блине. Пауза 2 сек внизу, без пружинения" },
   neck_flex:    { name: "Сгибание шеи лёжа", sets: 2, repMin: 15, repMax: 20, type: "safe", note: "Лёжа на спине, блин на лбу через полотенце, подбородок к груди. Первые 2–3 недели без веса" },
 
   rdl:          { name: "Румынская тяга", sets: 2, repMin: 8, repMax: 12, type: "base" },
@@ -160,19 +160,20 @@ const CATALOG = {
   db_row:       { name: "Тяга гантели с упором в скамью", sets: 2, repMin: 8, repMax: 12, type: "base", note: "Колено и рука на скамье, поясница разгружена" },
   shrug:        { name: "Шраги с гантелями", sets: 2, repMin: 12, repMax: 15, type: "iso", note: "Строго вверх, без вращений, голову не выносить вперёд" },
   curl_incline: { name: "Сгибания гантелей на наклонной скамье", sets: 2, repMin: 10, repMax: 12, type: "iso", note: "Скамья 45–60°, руки свисают за корпусом. Локти не уводи вперёд, внизу полное разгибание" },
-  lat_raise:    { name: "Махи гантелей в стороны", sets: 2, repMin: 15, repMax: 20, type: "iso" },
+  lat_raise:    { name: "Махи гантелей в стороны", sets: 3, repMin: 15, repMax: 20, type: "iso" },
 
   leg_press:    { name: "Жим ногами", sets: 2, repMin: 8, repMax: 12, type: "base" },
-  leg_curl:     { name: "Сгибания ног в тренажёре", sets: 2, repMin: 10, repMax: 15, type: "iso", note: "Сидя, если есть такой тренажёр" },
+  leg_curl:     { name: "Сгибания ног в тренажёре", sets: 3, repMin: 10, repMax: 15, type: "iso", note: "Сидя, если есть такой тренажёр" },
   leg_ext:      { name: "Разгибания ног в тренажёре", sets: 2, repMin: 10, repMax: 15, type: "iso", note: "Если спинка регулируется — откинь её назад, так сильнее растягивается прямая мышца бедра" },
   incline_db_n: { name: "Жим гантелей на наклонной 30°, нейтральный хват", sets: 2, repMin: 8, repMax: 12, type: "base", note: "Ладони смотрят друг на друга. Внизу пауза в растяжении, без отбива" },
   pec_deck:     { name: "Бабочка", sets: 2, repMin: 10, repMax: 15, type: "iso" },
-  pulldown_c:   { name: "Верхний блок узким хватом", sets: 2, repMin: 10, repMax: 12, type: "base" },
+  pulldown_c:   { name: "Верхний блок узким хватом, акцент на бицепс", sets: 2, repMin: 10, repMax: 12, type: "base" },
   face_pull:    { name: "Face pull", sets: 2, repMin: 15, repMax: 20, type: "iso", note: "Верхний блок, канат, тянешь к лбу, локти вверх и в стороны" },
-  calf:         { name: "Икры в жиме ногами", sets: 2, repMin: 12, repMax: 15, type: "safe", note: "Подушечки стоп целиком на нижнем краю платформы, колени почти прямые. Внизу пауза 1–2 сек в растяжении" },
+  calf:         { name: "Икры в жиме ногами", sets: 3, repMin: 8, repMax: 12, type: "base", note: "Подушечки стоп целиком на нижнем краю платформы, колени почти прямые. Пауза 2 сек внизу, без пружинения. В конце подхода — частичные повторы снизу" },
 
   // выведены из программы — нужны только для истории
   vsquat:       { name: "V-Squat (Super Squat)", retired: true },
+  neck_ext:     { name: "Разгибание шеи лёжа", retired: true },
   neck_side:    { name: "Боковые наклоны шеи лёжа", retired: true },
   incline_45:   { name: "Жим штанги на наклонной 45°", retired: true },
   incline_bb30: { name: "Жим штанги на наклонной 30°", retired: true },
@@ -188,7 +189,7 @@ const CATALOG = {
 const PROGRAM = {
   A: { title: "Жимы + квадрицепс", color: "#E5484D", exercises: [
     { id: "smith_squat" }, { id: "incline_db" }, { id: "cable_row" }, { id: "seated_press" },
-    { id: "tri_french" }, { id: "rev_fly" }, { id: "neck_ext" }, { id: "neck_flex" },
+    { id: "tri_french" }, { id: "lat_raise" }, { id: "calf_seated" }, { id: "neck_flex" },
   ]},
   B: { title: "Тяги + задняя цепь", color: "#3E7BFA", exercises: [
     { id: "rdl" }, { id: "pulldown" }, { id: "flat_db" }, { id: "db_row" },
@@ -197,7 +198,7 @@ const PROGRAM = {
   C: { title: "Ноги + слабые места", color: "#F0B429", exercises: [
     { id: "leg_press" }, { id: "leg_curl" }, { id: "leg_ext" },
     { options: ["incline_db_n", "pec_deck"], note: "Чередуй через тренировку — приложение само предложит нужное" },
-    { id: "pulldown_c" }, { id: "face_pull" }, { id: "calf" },
+    { id: "pulldown_c" }, { id: "lat_raise" }, { id: "face_pull" }, { id: "calf" },
   ]},
 };
 
