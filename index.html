@@ -168,6 +168,8 @@ const CATALOG = {
   pulldown_c:   { name: "Верхний блок узким обратным/нейтральным хватом, акцент на бицепс", sets: 2, repMin: 10, repMax: 12, type: "base" },
   lat_cable:    { name: "Махи в сторону на кроссовере одной рукой", sets: 3, repMin: 12, repMax: 15, type: "iso", note: "Повторы на каждую руку. Блок внизу, трос проходит за спиной. Внизу пауза в растяжении, поднимай до уровня плеча" },
   face_pull_x:  { name: "Face pull на кроссовере", sets: 2, repMin: 15, repMax: 20, type: "iso", note: "Стоя, блок на уровне лба или чуть выше, канат. Тянешь к лбу, локти вверх и в стороны, кисти у ушей. Пауза 1 сек" },
+  hammer_curl:  { name: "Сгибания «молот» с гантелями", sets: 2, repMin: 10, repMax: 12, type: "iso", note: "Ладони друг к другу, локти прижаты к корпусу, без раскачки. Можно суперсетом с французским жимом" },
+  tri_cable_oh: { name: "Разгибания из-за головы на кроссовере", sets: 2, repMin: 10, repMax: 15, type: "iso", note: "Канат, спиной к блоку, шаг вперёд, корпус чуть наклонён. Локти смотрят вперёд и не двигаются, сзади пауза в растяжении. Можно суперсетом с face pull" },
   calf:         { name: "Икры в жиме ногами (или в Смите стоя)", sets: 4, repMin: 8, repMax: 12, type: "base", note: "Колени почти прямые, пауза 2 сек внизу, без пружинения. В жиме ногами — запас 1 повтор и без частичных: стопа может сорваться. Частичные в растяжении — только в Смите с крюками" },
 
   // выведены из программы — нужны только для истории
@@ -193,7 +195,7 @@ const CATALOG = {
 const PROGRAM = {
   A: { title: "Жимы + квадрицепс + верх спины", color: "#E5484D", exercises: [
     { id: "smith_squat" }, { id: "incline_db" }, { id: "row_wide" },
-    { id: "tri_french" }, { id: "lat_raise" }, { id: "calf" }, { id: "neck_flex" },
+    { id: "tri_french" }, { id: "hammer_curl" }, { id: "lat_raise" }, { id: "calf" }, { id: "neck_flex" },
   ]},
   B: { title: "Тяги + задняя цепь", color: "#3E7BFA", exercises: [
     { id: "rdl" }, { id: "pulldown" }, { id: "flat_db" }, { id: "row_1arm" },
@@ -202,7 +204,7 @@ const PROGRAM = {
   C: { title: "Ноги + слабые места", color: "#F0B429", exercises: [
     { id: "leg_press" }, { id: "leg_curl" }, { id: "leg_ext" },
     { options: ["incline_db_n", "pec_deck"], note: "Чередуй через тренировку — приложение само предложит нужное" },
-    { id: "pulldown_c" }, { id: "lat_cable" }, { id: "face_pull_x" }, { id: "calf" },
+    { id: "pulldown_c" }, { id: "lat_cable" }, { id: "tri_cable_oh" }, { id: "face_pull_x" }, { id: "calf" },
   ]},
 };
 
