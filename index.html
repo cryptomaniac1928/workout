@@ -166,11 +166,13 @@ const CATALOG = {
   incline_db_n: { name: "Жим гантелей на наклонной 30°, нейтральный хват", sets: 2, repMin: 8, repMax: 12, type: "base", note: "Ладони смотрят друг на друга. Внизу пауза в растяжении, без отбива" },
   pec_deck:     { name: "Бабочка", sets: 2, repMin: 10, repMax: 15, type: "iso" },
   pulldown_c:   { name: "Верхний блок узким обратным/нейтральным хватом, акцент на бицепс", sets: 2, repMin: 10, repMax: 12, type: "base" },
-  face_pull:    { name: "Face pull", sets: 2, repMin: 15, repMax: 20, type: "iso", note: "Верхний блок, канат, тянешь к лбу, локти вверх и в стороны" },
+  lat_cable:    { name: "Махи в сторону на кроссовере одной рукой", sets: 3, repMin: 12, repMax: 15, type: "iso", note: "Повторы на каждую руку. Блок внизу, трос проходит за спиной. Внизу пауза в растяжении, поднимай до уровня плеча" },
+  face_pull_x:  { name: "Face pull на кроссовере", sets: 2, repMin: 15, repMax: 20, type: "iso", note: "Стоя, блок на уровне лба или чуть выше, канат. Тянешь к лбу, локти вверх и в стороны, кисти у ушей. Пауза 1 сек" },
   calf:         { name: "Икры в жиме ногами (или в Смите стоя)", sets: 4, repMin: 8, repMax: 12, type: "base", note: "Колени почти прямые, пауза 2 сек внизу, без пружинения. В жиме ногами — запас 1 повтор и без частичных: стопа может сорваться. Частичные в растяжении — только в Смите с крюками" },
 
   // выведены из программы — нужны только для истории
   vsquat:       { name: "V-Squat (Super Squat)", retired: true },
+  face_pull:    { name: "Face pull на верхнем блоке", retired: true },
   cable_row:    { name: "Тяга горизонтального блока, узкая рукоять", retired: true },
   seated_press: { name: "Жим гантелей сидя", retired: true },
   calf_seated:  { name: "Подъёмы на икры сидя", retired: true },
@@ -200,7 +202,7 @@ const PROGRAM = {
   C: { title: "Ноги + слабые места", color: "#F0B429", exercises: [
     { id: "leg_press" }, { id: "leg_curl" }, { id: "leg_ext" },
     { options: ["incline_db_n", "pec_deck"], note: "Чередуй через тренировку — приложение само предложит нужное" },
-    { id: "pulldown_c" }, { id: "lat_raise" }, { id: "face_pull" }, { id: "calf" },
+    { id: "pulldown_c" }, { id: "lat_cable" }, { id: "face_pull_x" }, { id: "calf" },
   ]},
 };
 
