@@ -166,7 +166,7 @@ const CATALOG = {
   incline_db_n: { name: "Жим гантелей на наклонной 30°, нейтральный хват", sets: 2, repMin: 8, repMax: 12, type: "base", note: "Ладони смотрят друг на друга. Внизу пауза в растяжении, без отбива" },
   pec_deck:     { name: "Бабочка", sets: 2, repMin: 10, repMax: 15, type: "iso" },
   pulldown_c:   { name: "Верхний блок узким обратным/нейтральным хватом, акцент на бицепс", sets: 2, repMin: 10, repMax: 12, type: "base" },
-  lat_cable:    { name: "Махи в сторону на кроссовере одной рукой", sets: 3, repMin: 12, repMax: 15, type: "iso", note: "Повторы на каждую руку. Блок внизу, трос проходит за спиной. Внизу пауза в растяжении, поднимай до уровня плеча" },
+  lat_lean:     { name: "Махи гантелью одной рукой с наклоном", sets: 3, repMin: 12, repMax: 15, type: "iso", note: "Повторы на каждую руку. Держись свободной рукой за стойку и отклонись в сторону на 15–20°. Поднимай до уровня плеча, опускай за 2–3 сек" },
   face_pull_x:  { name: "Face pull на кроссовере", sets: 2, repMin: 15, repMax: 20, type: "iso", note: "Стоя, блок на уровне лба или чуть выше, канат. Тянешь к лбу, локти вверх и в стороны, кисти у ушей. Пауза 1 сек" },
   hammer_curl:  { name: "Сгибания «молот» с гантелями", sets: 2, repMin: 10, repMax: 12, type: "iso", note: "Ладони друг к другу, локти прижаты к корпусу, без раскачки. Можно суперсетом с французским жимом" },
   tri_cable_oh: { name: "Разгибания из-за головы на кроссовере", sets: 2, repMin: 10, repMax: 15, type: "iso", note: "Канат, спиной к блоку, шаг вперёд, корпус чуть наклонён. Локти смотрят вперёд и не двигаются, сзади пауза в растяжении. Можно суперсетом с face pull" },
@@ -174,6 +174,7 @@ const CATALOG = {
 
   // выведены из программы — нужны только для истории
   vsquat:       { name: "V-Squat (Super Squat)", retired: true },
+  lat_cable:    { name: "Махи в сторону на кроссовере одной рукой", retired: true },
   face_pull:    { name: "Face pull на верхнем блоке", retired: true },
   cable_row:    { name: "Тяга горизонтального блока, узкая рукоять", retired: true },
   seated_press: { name: "Жим гантелей сидя", retired: true },
@@ -204,7 +205,7 @@ const PROGRAM = {
   C: { title: "Ноги + слабые места", color: "#F0B429", exercises: [
     { id: "leg_press" }, { id: "leg_curl" }, { id: "leg_ext" },
     { options: ["incline_db_n", "pec_deck"], note: "Чередуй через тренировку — приложение само предложит нужное" },
-    { id: "pulldown_c" }, { id: "lat_cable" }, { id: "tri_cable_oh" }, { id: "face_pull_x" }, { id: "calf" },
+    { id: "pulldown_c" }, { id: "lat_lean" }, { id: "tri_cable_oh" }, { id: "face_pull_x" }, { id: "calf" },
   ]},
 };
 
